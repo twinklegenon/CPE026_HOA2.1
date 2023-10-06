@@ -1,67 +1,76 @@
-import{useState} from 'react';
-import { StyleSheet, Text, View, Button,TextInput, 
-  ImageBackground, TouchableOpacity, FlatList } from 'react-native';
+import { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ImageBackground,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 
 export default function App() {
+  const [enteredGoalText, setEnteredGoalText] = useState('');
+  const [courseGoals, setCourseGoals] = useState([]);
 
-  const[enteredGoalText, setEnteredGoalText] = useState('')
-  const[courseGoals, setCourseGoals] = useState([])
-
-  function goalnputHandler(enteredText){
+  function goalnputHandler(enteredText) {
     setEnteredGoalText(enteredText);
-};
-/*Bad Programming Practice*/
-    function addGoalHandler(){
-   // console.log(enteredGoalText)
-    if (enteredGoalText.trim() === ''){
+  }
+
+  function addGoalHandler() {
+    if (enteredGoalText.trim() === '') {
       return;
     }
 
-  setCourseGoals((currentCourseGoals) => 
-  [...courseGoals, { id: Math.random().toString(), value: enteredGoalText}]);
-  setEnteredGoalText('');
-};
-
-  function removeGoalHandler(goalID){
-    setCourseGoals(currentCourseGoals =>
-    currentCourseGoals.filter(goal =>
-      goal.id !== goalID));
+    setCourseGoals((currentCourseGoals) => [
+      ...courseGoals,
+      { id: Math.random().toString(), value: enteredGoalText },
+    ]);
+    setEnteredGoalText('');
   }
 
   return (
     <ImageBackground
-    source={require('./act2_bg4.jpg')}
-    style={styles.backgroundImage}>
-
+      source={require('./act2_bg4.jpg')}
+      style={styles.backgroundImage}
+    >
       <View style={styles.appContainer}>
-      <View style={styles.headerContainer}>
-          <Text style= {styles.Title}>2023 Goals</Text>
-          <Text style= {styles.subHeader}>Your Milestone Tracker</Text>
-      </View> 
+        <View style={styles.headerContainer}>
+          <Text style={styles.Title}>2023 Goals</Text>
+          <Text style={styles.subHeader}>Your Milestone Tracker</Text>
+        </View>
 
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Your Course Goal"
+            style={styles.inputText}
+            onChangeText={goalnputHandler}
+            value={enteredGoalText}
+          />
+          <Button title="Add Goal" color="#5D4534" onPress={addGoalHandler} />
+        </View>
 
-          <View style={styles.inputContainer}>
-          <TextInput placeholder='Your Course Goal' 
-          style ={styles.inputText} 
-          onChangeText={goalnputHandler}
-          value={enteredGoalText}/>
-          <Button title = "Add Goal" color="#5D4534" 
-          onPress={addGoalHandler}/>
-         </View>
-
-
-
-        <FlatList keyExtractor= {(item, index) => item.id}
-        data={courseGoals} renderItem={itemData => (
-        <TouchableOpacity onPress={() => removeGoalHandler(itemData.item.id)}>
-          <View style={styles.goalItem}>
-            <Text style={styles.goalText}>{itemData.item.value}</Text>
-          </View>
-        </TouchableOpacity>)}  
-      />
-    </View>
-  </ImageBackground>
- );
+        <FlatList
+          keyExtractor={(item, index) => item.id}
+          data={courseGoals}
+          renderItem={(itemData) => (
+            <TouchableOpacity
+              onPress={() => {
+                setCourseGoals((prevGoals) =>
+                  prevGoals.filter((goal) => goal.id !== itemData.item.id)
+                );
+              }}
+            >
+              <View style={styles.goalItem}>
+                <Text style={styles.goalText}>{itemData.item.value}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </ImageBackground>
+  );
 }
 
 const styles = {
